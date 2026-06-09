@@ -95,14 +95,13 @@ export default function BriefingPage() {
     if (!result || sharing) return;
     setSharing(true);
 
-    const firstLine = result.briefing.split(".")[0] + ".";
+    const dateLabel = new Date().toLocaleDateString("en-IN", { month: "long", day: "numeric" });
     const params = new URLSearchParams({
-      origin: result.origin,
-      destination: result.destination,
       originCity: result.originCity,
       destinationCity: result.destinationCity,
       severity: result.severity ?? "none",
-      line: firstLine.slice(0, 120),
+      date: dateLabel,
+      ...(result.flightNumber ? { flightNumber: result.flightNumber } : {}),
     });
 
     const imageUrl = `${window.location.origin}/og?${params.toString()}`;

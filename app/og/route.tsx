@@ -5,12 +5,11 @@ export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-  const origin = url.searchParams.get("origin") ?? "BOM";
-  const destination = url.searchParams.get("destination") ?? "DEL";
-  const originCity = url.searchParams.get("originCity") ?? origin;
-  const destinationCity = url.searchParams.get("destinationCity") ?? destination;
-  const severity = url.searchParams.get("severity") ?? "none"; // none | light | moderate | severe
-  const line = url.searchParams.get("line") ?? "Looks like a smooth one.";
+  const originCity = url.searchParams.get("originCity") ?? "Mumbai";
+  const destinationCity = url.searchParams.get("destinationCity") ?? "Delhi";
+  const severity = url.searchParams.get("severity") ?? "none";
+  const flightNumber = url.searchParams.get("flightNumber") ?? null;
+  const date = url.searchParams.get("date") ?? null; // e.g. "June 9"
 
   // Severity-based card headline — written for a card, not pulled from briefing paragraph
   const cardHeadline =
@@ -51,27 +50,45 @@ export async function GET(req: NextRequest) {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px 80px",
-          fontFamily: "Georgia, serif",
+          fontFamily: "sans-serif",
         }}
       >
-        {/* Top: app name */}
-        <div style={{ color: "#c8b89a", fontSize: "20px", letterSpacing: "0.15em", fontFamily: "sans-serif" }}>
-          ✈ TURBULENCE BRIEF
+        {/* Top: app name + flight meta */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ color: "#c8b89a", fontSize: "18px", letterSpacing: "0.15em" }}>
+            ✈ TURBULENCE BRIEF
+          </div>
+          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+            {flightNumber && (
+              <span style={{
+                color: "#8b6040",
+                fontSize: "18px",
+                background: "#f0e8dc",
+                padding: "6px 16px",
+                borderRadius: "100px",
+                border: "1px solid #e0d0c0",
+              }}>
+                {flightNumber}
+              </span>
+            )}
+            {date && (
+              <span style={{ color: "#c8b89a", fontSize: "18px" }}>{date}</span>
+            )}
+          </div>
         </div>
 
         {/* Middle: route + headline */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: "16px" }}>
-            <span style={{ color: "#1a1510", fontSize: "64px", fontWeight: "700", fontFamily: "sans-serif" }}>
+            <span style={{ color: "#1a1510", fontSize: "68px", fontWeight: "700" }}>
               {originCity}
             </span>
-            <span style={{ color: "#d4c0a8", fontSize: "52px", fontFamily: "sans-serif" }}>→</span>
-            <span style={{ color: "#1a1510", fontSize: "64px", fontWeight: "700", fontFamily: "sans-serif" }}>
+            <span style={{ color: "#d4c0a8", fontSize: "56px" }}>→</span>
+            <span style={{ color: "#1a1510", fontSize: "68px", fontWeight: "700" }}>
               {destinationCity}
             </span>
           </div>
-
-          <p style={{ color: "#5c3d1e", fontSize: "34px", lineHeight: "1.4", margin: "0", fontWeight: "300" }}>
+          <p style={{ color: "#5c3d1e", fontSize: "32px", lineHeight: "1.45", margin: "0", fontWeight: "300" }}>
             {cardHeadline}
           </p>
         </div>
@@ -86,9 +103,9 @@ export async function GET(req: NextRequest) {
             padding: "8px 20px",
           }}>
             <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: severityColor }} />
-            <span style={{ color: severityColor, fontSize: "20px", fontFamily: "sans-serif" }}>{severityLabel}</span>
+            <span style={{ color: severityColor, fontSize: "18px" }}>{severityLabel}</span>
           </div>
-          <span style={{ color: "#c8b89a", fontSize: "18px", fontFamily: "sans-serif" }}>turbulencebrief.vercel.app</span>
+          <span style={{ color: "#c8b89a", fontSize: "16px" }}>turbulencebrief.vercel.app</span>
         </div>
       </div>
     ),
