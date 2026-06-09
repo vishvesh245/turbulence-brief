@@ -12,17 +12,33 @@ export async function GET(req: NextRequest) {
   const severity = url.searchParams.get("severity") ?? "none"; // none | light | moderate | severe
   const line = url.searchParams.get("line") ?? "Looks like a smooth one.";
 
-  const dotColor =
-    severity === "none" ? "#22c55e" :
-    severity === "light" ? "#eab308" :
-    severity === "moderate" ? "#f97316" :
-    "#ef4444";
+  // Severity-based card headline — written for a card, not pulled from briefing paragraph
+  const cardHeadline =
+    severity === "none"
+      ? "You're going to be fine."
+      : severity === "light"
+      ? "A little bumpy, nothing to worry about."
+      : severity === "moderate"
+      ? "Rough patch ahead — but the plane handles this every day."
+      : "It'll be choppy. The aircraft is built for far worse.";
 
   const severityLabel =
-    severity === "none" ? "Smooth" :
+    severity === "none" ? "Smooth flight expected" :
     severity === "light" ? "Light turbulence" :
     severity === "moderate" ? "Moderate turbulence" :
     "Rough conditions";
+
+  const severityColor =
+    severity === "none" ? "#5a8a6a" :
+    severity === "light" ? "#8a7a3a" :
+    severity === "moderate" ? "#8a5a2a" :
+    "#8a3a3a";
+
+  const severityBg =
+    severity === "none" ? "#e8f5ec" :
+    severity === "light" ? "#f5f0e0" :
+    severity === "moderate" ? "#f5ece0" :
+    "#f5e0e0";
 
   return new ImageResponse(
     (
@@ -30,48 +46,49 @@ export async function GET(req: NextRequest) {
         style={{
           width: "1200px",
           height: "630px",
-          background: "#0f172a",
+          background: "#faf7f2",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "60px 80px",
-          fontFamily: "sans-serif",
+          padding: "64px 80px",
+          fontFamily: "Georgia, serif",
         }}
       >
         {/* Top: app name */}
-        <div style={{ color: "#475569", fontSize: "24px", letterSpacing: "0.1em" }}>
-          TURBULENCE BRIEF
+        <div style={{ color: "#c8b89a", fontSize: "20px", letterSpacing: "0.15em", fontFamily: "sans-serif" }}>
+          ✈ TURBULENCE BRIEF
         </div>
 
-        {/* Middle: route + briefing line */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <span style={{ color: "#f8fafc", fontSize: "56px", fontWeight: "700" }}>
+        {/* Middle: route + headline */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "16px" }}>
+            <span style={{ color: "#1a1510", fontSize: "64px", fontWeight: "700", fontFamily: "sans-serif" }}>
               {originCity}
             </span>
-            <span style={{ color: "#334155", fontSize: "48px" }}>→</span>
-            <span style={{ color: "#f8fafc", fontSize: "56px", fontWeight: "700" }}>
+            <span style={{ color: "#d4c0a8", fontSize: "52px", fontFamily: "sans-serif" }}>→</span>
+            <span style={{ color: "#1a1510", fontSize: "64px", fontWeight: "700", fontFamily: "sans-serif" }}>
               {destinationCity}
             </span>
           </div>
 
-          <p style={{ color: "#cbd5e1", fontSize: "32px", lineHeight: "1.4", margin: "0" }}>
-            {line}
+          <p style={{ color: "#5c3d1e", fontSize: "34px", lineHeight: "1.4", margin: "0", fontWeight: "300" }}>
+            {cardHeadline}
           </p>
         </div>
 
-        {/* Bottom: severity indicator + url */}
+        {/* Bottom: severity pill + url */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{
-              width: "16px",
-              height: "16px",
-              borderRadius: "50%",
-              background: dotColor,
-            }} />
-            <span style={{ color: "#94a3b8", fontSize: "22px" }}>{severityLabel}</span>
+          <div style={{
+            display: "flex", alignItems: "center", gap: "8px",
+            background: severityBg,
+            border: `1px solid ${severityColor}40`,
+            borderRadius: "100px",
+            padding: "8px 20px",
+          }}>
+            <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: severityColor }} />
+            <span style={{ color: severityColor, fontSize: "20px", fontFamily: "sans-serif" }}>{severityLabel}</span>
           </div>
-          <span style={{ color: "#334155", fontSize: "20px" }}>turbulencebrief.vercel.app</span>
+          <span style={{ color: "#c8b89a", fontSize: "18px", fontFamily: "sans-serif" }}>turbulencebrief.vercel.app</span>
         </div>
       </div>
     ),
