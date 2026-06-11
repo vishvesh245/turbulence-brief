@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BriefingResult } from "../actions/getBriefing";
-import { FLIGHT_PHASES } from "@/lib/playlists";
 
 function BannerBadge({ state }: { state: "live" | "forecast" | "estimate" }) {
   const styles = {
@@ -21,62 +20,6 @@ function BannerBadge({ state }: { state: "live" | "forecast" | "estimate" }) {
   );
 }
 
-function PlaylistSection({ flightHours }: { flightHours: number }) {
-  const phases = flightHours < 1
-    ? FLIGHT_PHASES.filter(p => p.phase !== "cruising")
-    : FLIGHT_PHASES;
-
-  return (
-    <div className="space-y-5">
-      <div>
-        <h2 className="text-sm font-medium" style={{ color: "#3a2518" }}>What to listen to</h2>
-        <p className="text-xs mt-0.5" style={{ color: "#a89070" }}>
-          Open playlists in Spotify before boarding — they won&apos;t load mid-flight.
-        </p>
-      </div>
-
-      {phases.map((phase) => (
-        <div key={phase.phase} className="space-y-2.5">
-          <div>
-            <p className="text-sm font-medium" style={{ color: "#3a2518" }}>{phase.label}</p>
-            <p className="text-xs" style={{ color: "#a89070" }}>{phase.sublabel}</p>
-          </div>
-
-          {phase.playlists.map((playlist) => (
-            <div key={playlist.spotifyId} className="rounded-xl p-3 space-y-2.5"
-              style={{ background: "white", border: "1px solid #e8ddd0" }}>
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm font-medium" style={{ color: "#1a1510" }}>{playlist.name}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#a89070" }}>{playlist.description}</p>
-                </div>
-                <span className="text-xs px-2 py-0.5 rounded-full shrink-0"
-                  style={{ background: "#f0e8dc", color: "#8b6040" }}>
-                  {playlist.mood}
-                </span>
-              </div>
-
-              <iframe
-                src={`https://open.spotify.com/embed/playlist/${playlist.spotifyId}?utm_source=generator`}
-                width="100%"
-                height="80"
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                className="rounded-lg"
-              />
-
-              <a href={playlist.youtubeMusicUrl} target="_blank" rel="noopener noreferrer"
-                className="text-xs" style={{ color: "#c8b89a" }}>
-                Open in YouTube Music instead
-              </a>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function BriefingPage() {
   const [result, setResult] = useState<BriefingResult | null>(null);
@@ -208,8 +151,17 @@ export default function BriefingPage() {
         {/* Divider */}
         <div style={{ borderTop: "1px solid #e8ddd0" }} />
 
-        {/* Playlists */}
-        <PlaylistSection flightHours={result.flightHours} />
+        {/* Playlists nudge */}
+        <div className="rounded-xl px-4 py-3.5 flex items-center justify-between gap-3"
+          style={{ background: "white", border: "1px solid #e8ddd0" }}>
+          <div>
+            <p className="text-sm font-medium" style={{ color: "#3a2518" }}>In-flight playlists</p>
+            <p className="text-xs mt-0.5" style={{ color: "#a89070" }}>Music for boarding, cruising, and the bumpy bits.</p>
+          </div>
+          <a href="/playlists" className="text-sm font-medium shrink-0" style={{ color: "#8b5e3c" }}>
+            Browse →
+          </a>
+        </div>
 
         <p className="text-center text-xs pt-2" style={{ color: "#d4c0a8" }}>
           Turbulence Brief · Data from AviationWeather.gov

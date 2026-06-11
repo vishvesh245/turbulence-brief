@@ -16,16 +16,16 @@ export async function GET(req: NextRequest) {
     severity === "none"
       ? "You're going to be fine."
       : severity === "light"
-      ? "A little bumpy, nothing to worry about."
+      ? "A little bumpy, but nothing to worry about."
       : severity === "moderate"
-      ? "Rough patch ahead — but the plane handles this every day."
-      : "It'll be choppy. The aircraft is built for far worse.";
+      ? "Some bumps ahead. Pilots fly through this every day."
+      : "Bumpy ride, but the aircraft is built for far worse.";
 
   const severityLabel =
     severity === "none" ? "Smooth flight expected" :
     severity === "light" ? "Light turbulence" :
     severity === "moderate" ? "Moderate turbulence" :
-    "Rough conditions";
+    "Bumpy conditions";
 
   const severityColor =
     severity === "none" ? "#5a8a6a" :

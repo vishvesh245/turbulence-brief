@@ -32,7 +32,15 @@ Extract a JSON object with this exact structure:
 }
 
 Rules:
-- If no data is found, set hasTurbulence to false and severity to "none"
+- CAPE > 3000 J/kg AND an active TS/CB SIGMET directly on route = severity "severe"
+- CAPE > 2500 J/kg OR an active TS/CB SIGMET = severity "moderate"
+- CAPE 1000–2500 with no active SIGMET = severity "light"
+- CAPE 500–1000 = possible light turbulence (severity "light")
+- CAPE < 500 with no SIGMETs = smooth (severity "none")
+- A TS SIGMET nearby but not directly on the route polygon = prefer "light" over "moderate" — SIGMETs cover large areas, not the entire bounding box
+- Any TURB SIGMET = hasTurbulence true, severity based on MOD/SEV qualifier
+- "Severe" is rare — use it only when both CAPE is extreme AND a SIGMET is active directly covering the route
+- Only set hasTurbulence false and severity "none" if there are NO SIGMETs AND CAPE is below 500 everywhere
 - Do not invent specific turbulence windows if data quality is "estimate"
 - dataQuality must be "${ctx.bannerState}"
 - Return ONLY valid JSON, no explanation`;
@@ -75,8 +83,8 @@ Write 3 sentences maximum. Here is exactly how to write each one:
 Sentence 1 — What to expect, stated plainly.
 - If no turbulence: don't say "smooth conditions" or "good news". Say what they'll actually feel, like "This one should be pretty uneventful — a short, quiet ride."
 - If light turbulence: "There'll be some light bumping, the kind where your drink stays on the tray but you'll feel the air moving a bit."
-- If moderate: "Expect a rough patch — seatbelts will need to be on, and it'll feel like a bumpy road for a bit. Not fun, but completely within what the aircraft handles routinely."
-- If severe: be honest but grounding — "It's going to be choppy. That can feel alarming. But the plane is built to handle conditions far beyond what passengers ever experience."
+- If moderate: "There'll be some noticeable bumping on this one — seatbelt on, drink put down, but nothing that should worry you. Pilots fly through this every single day."
+- If severe: be grounding, not alarming — "It's going to be a bumpy ride, the kind where you'll feel it in your seat. The aircraft handles this routinely — it's built for conditions much worse than this."
 
 Sentence 2 — One concrete physical anchor that normalizes what they'll feel. Not a disclaimer. Something like: "The aircraft is designed to flex and handle this — what feels dramatic from your seat is very routine from ours." Or for a smooth flight: "At 30,000 feet on a clear day, flying often feels like sitting in a room that happens to be moving."
 
@@ -89,6 +97,7 @@ Rules:
 - Do not start with "Good news" or any hype opener.
 - Do not mention "the crew is monitoring" — it sounds like a PA announcement.
 - If dataQuality is "estimate", weave in naturally that this is based on typical patterns for this route, not a live forecast. Don't make it a formal caveat.
+- If turbulence is from convective instability (high CAPE) rather than a confirmed SIGMET, phrase it as "the atmosphere along this route looks unsettled" or "there's some convective activity in the area" — not as a certainty.
 - Under 80 words total.
 
 Return only the briefing. Nothing else.`;
